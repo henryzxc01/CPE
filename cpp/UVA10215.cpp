@@ -1,3 +1,4 @@
+//https://vjudge.net/problem/UVA-10215
 #include <iostream>
 #include <cmath>
 
