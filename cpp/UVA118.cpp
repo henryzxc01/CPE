@@ -1,52 +1,58 @@
 //https://zerojudge.tw/ShowProblem?problemid=c082
-#include <iostream>
-#include <map>
+#include <bits/stdc++.h>
 using namespace std;
-int scent[55][55];
-int dx[] = {0, 1, 0, -1}; //N, E, S, W
-int dy[] = {1, 0, -1, 0};
- 
+
 int main() {
-    int maxX, maxY, currX, currY, dirIdx, nextX, nextY;
-    char dirChar;
-    bool lost = false;
-    string instructions;
-    map <char, int> charToDir;
-    map <int, char> dirToChar;
-    charToDir['N'] = 0; dirToChar[0] = 'N';
-    charToDir['E'] = 1; dirToChar[1] = 'E';
-    charToDir['S'] = 2; dirToChar[2] = 'S';
-    charToDir['W'] = 3; dirToChar[3] = 'W';
-    cin >> maxX >> maxY;
-    while (cin >> currX >> currY >> dirChar >> instructions){
-        dirIdx = charToDir[dirChar];
-        lost = false;
-        for (int i = 0; i < instructions.size(); i++){
-            if (instructions[i] == 'F'){
-                nextX = currX + dx[dirIdx];
-                nextY = currY + dy[dirIdx];
-                if (nextX >= 0 && nextX <= maxX && nextY >= 0 && nextY <= maxY){
-                    currX = nextX;
-                    currY = nextY;
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int X, Y;
+    cin >> X >> Y;
+
+    string dirs = "NESW";
+    int dx[4] = {0, 1, 0, -1};
+    int dy[4] = {1, 0, -1, 0};
+
+    bool scent[55][55] = {};
+
+    int x, y;
+    char c;
+    string cmd;
+
+    while (cin >> x >> y >> c >> cmd) {
+        int d = dirs.find(c);
+        bool lost = false;
+
+        for (char op : cmd) {
+            if (lost) break;
+
+            if (op == 'L') {
+                d = (d + 3) % 4;
+            } 
+            else if (op == 'R') {
+                d = (d + 1) % 4;
+            } 
+            else {
+                int nx = x + dx[d];
+                int ny = y + dy[d];
+
+                if (nx < 0 || nx > X || ny < 0 || ny > Y) {
+                    if (scent[x][y]) continue;
+
+                    scent[x][y] = true;
+                    lost = true;
                 } else {
-                    if (scent[currX][currY] == 1){
-                        //這個機器人正位在有標記的地方, 會忽略會讓他掉下去的指令。
-                        continue;
-                    } else {
-                        cout << currX << " " << currY << " " << dirToChar[dirIdx] << " LOST\n";
-                        lost = true;
-                        scent[currX][currY] = 1;
-                        break;
-                    }
+                    x = nx;
+                    y = ny;
                 }
-            } else if (instructions[i] == 'R'){
-                dirIdx = (dirIdx + 1) % 4;
-            } else {
-                dirIdx = (dirIdx - 1 + 4) % 4;
             }
         }
-        if (!lost) cout << currX << " " << currY << " " << dirToChar[dirIdx] << "\n";
+
+        cout << x << ' ' << y << ' ' << dirs[d];
+        if (lost) cout << " LOST";
+        cout << '\n';
     }
+
     return 0;
 }
 
